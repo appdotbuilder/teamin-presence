@@ -106,10 +106,15 @@ async function start() {
     },
     router: appRouter,
     createContext({ req }): Context {
-      // TODO: Implement JWT token extraction and validation
-      // For now, return empty context - authentication will be implemented later
       const authHeader = req.headers.authorization;
-      const userId = authHeader ? parseInt(authHeader.replace('Bearer ', '')) : undefined;
+      let userId: number | undefined;
+      if (authHeader && authHeader.startsWith('Bearer stub-token-')) {
+        const userIdStr = authHeader.replace('Bearer stub-token-', '');
+        userId = parseInt(userIdStr, 10);
+        if (isNaN(userId)) {
+          userId = undefined; // Ensure it's undefined if parsing fails
+        }
+      }
       
       return {
         userId,
