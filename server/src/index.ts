@@ -106,15 +106,11 @@ async function start() {
     },
     router: appRouter,
     createContext({ req }): Context {
+      // Extract user ID from Authorization header
+      // Client should send: Authorization: Bearer {userId}
+      // Where userId is extracted from localStorage token (e.g., "stub-token-123" -> "123")
       const authHeader = req.headers.authorization;
-      let userId: number | undefined;
-      if (authHeader && authHeader.startsWith('Bearer stub-token-')) {
-        const userIdStr = authHeader.replace('Bearer stub-token-', '');
-        userId = parseInt(userIdStr, 10);
-        if (isNaN(userId)) {
-          userId = undefined; // Ensure it's undefined if parsing fails
-        }
-      }
+      const userId = authHeader ? parseInt(authHeader.replace('Bearer ', '')) : undefined;
       
       return {
         userId,
